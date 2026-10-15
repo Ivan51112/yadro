@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>КОМАНДНЫЙ ЦЕНТР ГОРОДА // ЯДРО</title>
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --bg-panel: #0d1527;
+      --bg-card: rgba(16, 26, 48, 0.85);
+      --border: #1e293b;
+      --border-glow: #38bdf844;
+      --cyan: #38bdf8;
+      --cyan-glow: rgba(56, 189, 248, 0.4);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.4);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.4);
+      --rose: #f43f5e;
+      --purple: #a855f7;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* TOP BAR (16:9 Projector Optimized) */
+    header {
+      background: rgba(13, 21, 39, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .core-orb {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #38bdf8 0%, #0369a1 70%, #0c4a6e 100%);
+      box-shadow: 0 0 20px var(--cyan-glow);
+      animation: pulseOrb 3s infinite alternate;
+      position: relative;
+    }
+
+    @keyframes pulseOrb {
+      0% { transform: scale(0.95); box-shadow: 0 0 12px var(--cyan-glow); }
+      100% { transform: scale(1.08); box-shadow: 0 0 28px rgba(56, 189, 248, 0.8); }
+    }
+
+    .brand-title h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #38bdf8, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+    }
+
+    .brand-title p {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    nav.main-nav {
+      display: flex;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 5px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-btn.active {
+      background: var(--cyan);
+      color: #070b14;
+      font-weight: 700;
+      box-shadow: 0 0 15px var(--cyan-glow);
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-status {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--emerald);
+      color: var(--emerald);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-status.unlearned {
+      background: rgba(244, 63, 94, 0.15);
+      border-color: var(--rose);
+      color: var(--rose);
+    }
+
+    .icon-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--cyan);
+    }
+
+    /* MAIN VIEWPORT */
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1700px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .view-screen {
+      display: none;
+      animation: screenFade 0.35s ease;
+      flex: 1;
+    }
+
+    .view-screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes screenFade {
+      from { opacity: 0; transform: scale(0.99); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* SCREEN 1: TECH TREE (SVG Canvas) */
+    .tree-wrapper {
+      position: relative;
+      width: 100%;
+      height: 780px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.6);
+    }
+
+    .tree-filter-bar {
+      position: absolute;
+      top: 20px;
+      left: 24px;
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+      background: rgba(7, 11, 20, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 6px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      color: var(--text-main);
+    }
+
+    .filter-btn.active {
+      background: var(--cyan);
+      color: #070b14;
+      font-weight: 700;
+    }
+
+    .tree-legend {
+      position: absolute;
+      bottom: 20px;
+      left: 24px;
+      z-index: 10;
+      background: rgba(7, 11, 20, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      gap: 16px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* TECH TREE SVG ELEMENTS */
+    svg.tree-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .tree-link {
+      stroke: #334155;
+      stroke-width: 2.5;
+      stroke-dasharray: 6;
+      transition: all 0.6s;
+    }
+
+    .tree-link.unlocked {
+      stroke: var(--cyan);
+      stroke-width: 3.5;
+      stroke-dasharray: none;
+      filter: drop-shadow(0 0 6px var(--cyan));
+      animation: pulseLink 2.5s infinite alternate;
+    }
+
+    @keyframes pulseLink {
+      0% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    .tree-node-group {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .tree-node-group:hover {
+      transform: scale(1.08);
+    }
+
+    .node-circle-outer {
+      fill: #0d1527;
+      stroke: #334155;
+      stroke-width: 3;
+      transition: all 0.4s;
+    }
+
+    .tree-node-group.unlocked .node-circle-outer {
+      stroke: var(--cyan);
+      filter: drop-shadow(0 0 12px var(--cyan-glow));
+    }
+
+    .tree-node-group.day-1.unlocked .node-circle-outer { stroke: #38bdf8; filter: drop-shadow(0 0 12px #38bdf888); }
+    .tree-node-group.day-2.unlocked .node-circle-outer { stroke: #34d399; filter: drop-shadow(0 0 12px #34d39988); }
+    .tree-node-group.day-3.unlocked .node-circle-outer { stroke: #fbbf24; filter: drop-shadow(0 0 12px #fbbf2488); }
+    .tree-node-group.day-4.unlocked .node-circle-outer { stroke: #f43f5e; filter: drop-shadow(0 0 12px #f43f5e88); }
+    .tree-node-group.day-5.unlocked .node-circle-outer { stroke: #a855f7; filter: drop-shadow(0 0 12px #a855f788); }
+
+    .node-label-title {
+      fill: var(--text-main);
+      font-size: 13px;
+      font-weight: 700;
+      text-anchor: middle;
+    }
+
+    .node-label-day {
+      fill: var(--text-muted);
+      font-size: 10px;
+      font-family: var(--font-mono);
+      text-anchor: middle;
+    }
+
+    /* MODAL FOR NODE INFO */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--cyan);
+      border-radius: 18px;
+      max-width: 600px;
+      width: 90%;
+      padding: 28px;
+      box-shadow: 0 0 40px var(--cyan-glow);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* SCREEN 2: TERMINAL */
+    .terminal-container {
+      background: #050811;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 28px;
+      min-height: 700px;
+      box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .terminal-controls {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #090e1a;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .btn-upload {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      color: #070b14;
+      font-weight: 800;
+      font-size: 1.05rem;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 20px var(--cyan-glow);
+      transition: all 0.2s;
+    }
+
+    .btn-upload:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px var(--cyan-glow);
+    }
+
+    .terminal-screen {
+      background: #020408;
+      border: 1px solid #1e293b;
+      border-radius: 14px;
+      padding: 24px;
+      font-family: var(--font-mono);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .terminal-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .terminal-log {
+      flex: 1;
+      overflow-y: auto;
+      font-size: 0.92rem;
+      line-height: 1.7;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .log-line {
+      display: flex;
+      gap: 12px;
+      animation: logAppear 0.2s ease;
+    }
+
+    @keyframes logAppear {
+      from { opacity: 0; transform: translateX(-6px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .log-time { color: #64748b; }
+    .log-info { color: #38bdf8; }
+    .log-success { color: #10b981; font-weight: bold; }
+    .log-warn { color: #f59e0b; }
+    .log-core { color: #a855f7; font-weight: bold; }
+
+    .terminal-progress-box {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #1e293b;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 12px;
+      background: #0f172a;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8, #10b981);
+      transition: width 0.3s;
+      box-shadow: 0 0 12px var(--cyan-glow);
+    }
+
+    /* SCREEN 3: CHAT */
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      height: 750px;
+    }
+
+    .chat-sidebar {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .preset-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 12px 14px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--cyan);
+      background: rgba(56, 189, 248, 0.1);
+      transform: translateX(4px);
+    }
+
+    .chat-window {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 16px 20px;
+      border-radius: 14px;
+      line-height: 1.6;
+      font-size: 1.02rem;
+      animation: msgPop 0.3s ease;
+    }
+
+    @keyframes msgPop {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: #0284c7;
+      color: #ffffff;
+      border-bottom-right-radius: 2px;
+    }
+
+    .message.yadro {
+      align-self: flex-start;
+      background: var(--bg-card);
+      border: 1px solid var(--cyan-glow);
+      color: var(--text-main);
+      border-bottom-left-radius: 2px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .message.yadro-unlearned {
+      border-color: var(--rose);
+      background: rgba(244, 63, 94, 0.08);
+    }
+
+    .chat-input-bar {
+      padding: 16px 24px;
+      background: rgba(7, 11, 20, 0.85);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: #090e1a;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: var(--cyan);
+    }
+
+    /* SCREEN 4: DISTRICT LEADERBOARD */
+    .districts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .district-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .district-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent-color, #38bdf8);
+    }
+
+    .district-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .district-name {
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    .district-rank {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      color: var(--accent-color, #38bdf8);
+      font-weight: 800;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-val {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    /* ADMIN DRAWER */
+    .admin-drawer {
+      position: fixed;
+      top: 0;
+      right: -420px;
+      width: 420px;
+      height: 100vh;
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.8);
+      padding: 24px;
+      overflow-y: auto;
+      z-index: 2000;
+      transition: right 0.35s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .admin-drawer.open {
+      right: 0;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .admin-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .admin-section h4 {
+      font-size: 0.9rem;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand" onclick="handleBrandClick()">
+      <div class="core-orb"></div>
+      <div class="brand-title">
+        <h1>ЯДРО // ГОРОД</h1>
+        <p>ЛОКАЛЬНАЯ НЕЙРОСЕТЬ v2.4 · ШКОЛА МУЖЕСТВА</p>
+      </div>
+    </div>
+
+    <nav class="main-nav">
+      <button class="nav-btn active" onclick="switchView('tree')">🌳 Древо технологий</button>
+      <button class="nav-btn" onclick="switchView('terminal')">📡 Обучение Ядра</button>
+      <button class="nav-btn" onclick="switchView('chat')">🤖 Чат с Ядром</button>
+      <button class="nav-btn" onclick="switchView('districts')">🏆 Табло районов</button>
+    </nav>
+
+    <div class="top-controls">
+      <div id="yadro-status-pill" class="badge-status">
+        <span id="status-indicator">●</span>
+        <span id="status-text">ОБУЧЕНО (0/14)</span>
+      </div>
+      <button class="icon-btn" onclick="toggleSound()" id="sound-btn">🔊 Звук: ВКЛ</button>
+      <button class="icon-btn" onclick="openAdminModal()">⚙️ Ведущий</button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main>
+
+    <!-- VIEW 1: TECH TREE -->
+    <section id="view-tree" class="view-screen active">
+      <div class="tree-wrapper">
+        <div class="tree-filter-bar">
+          <button class="filter-btn active" onclick="filterTree('all')">Все дни</button>
+          <button class="filter-btn" onclick="filterTree('day-1')">День 1</button>
+          <button class="filter-btn" onclick="filterTree('day-2')">День 2</button>
+          <button class="filter-btn" onclick="filterTree('day-3')">День 3</button>
+          <button class="filter-btn" onclick="filterTree('day-4')">День 4</button>
+          <button class="filter-btn" onclick="filterTree('day-5')">День 5</button>
+        </div>
+
+        <svg class="tree-svg" id="tree-svg" viewBox="0 0 1600 780"></svg>
+
+        <div class="tree-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#38bdf8;"></div>Д1: Вода / Метод</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#34d399;"></div>Д2: Мост / Караван</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fbbf24;"></div>Д3: Ток / Проверка</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f43f5e;"></div>Д4: Маяк / Щит Города</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#a855f7;"></div>Д5: Перенос в школу</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: TERMINAL OF CORE LEARNING -->
+    <section id="view-terminal" class="view-screen">
+      <div class="terminal-container">
+        
+        <div class="terminal-controls">
+          <h3 style="font-size: 1.15rem; color: var(--cyan); margin-bottom: 4px;">ПЕРЕДАЧА ИНСТРУКЦИИ</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Загрузите проверенный способ решения задачи в локальную память Ядра.</p>
+
+          <div class="form-group">
+            <label>Отряд / Район Города:</label>
+            <select id="term-district-select" class="form-control">
+              <option value="Северный район">Северный район</option>
+              <option value="Южный форт">Южный форт</option>
+              <option value="Восточные мастера">Восточные мастера</option>
+              <option value="Западные исследователи">Западные исследователи</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Освоенная технология / Узел:</label>
+            <select id="term-node-select" class="form-control"></select>
+          </div>
+
+          <div class="form-group">
+            <label>Краткое описание проверенного шага:</label>
+            <input type="text" id="term-custom-desc" class="form-control" placeholder="Например: 'Соединили + к цинку, лампа горит'">
+          </div>
+
+          <button class="btn-upload" onclick="startCoreLearning()">
+            <span>⚡ НАЧАТЬ ЗАГРУЗКУ В ЯДРО</span>
+          </button>
+        </div>
+
+        <div class="terminal-screen">
+          <div class="terminal-header">
+            <span>YADRO_TERMINAL // SESSION #0412</span>
+            <span id="term-status-label">STATUS: ОЖИДАНИЕ ДАННЫХ</span>
+          </div>
+
+          <div class="terminal-log" id="terminal-log">
+            <div class="log-line">
+              <span class="log-time">[00:00:00]</span>
+              <span class="log-core">ЯДРО ГОРОДА АКТИВИРОВАНО.</span>
+              <span class="log-info">База знаний готова к приёму проверенных алгоритмов.</span>
+            </div>
+          </div>
+
+          <div class="terminal-progress-box">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted);">
+              <span>ИНТЕГРАЦИЯ БАЗЫ ЗНАНИЙ</span>
+              <span id="term-percent">0%</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" id="term-progress-fill"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 3: CHAT WITH YADRO -->
+    <section id="view-chat" class="view-screen">
+      <div class="chat-layout">
+        
+        <div class="chat-sidebar">
+          <h3 style="font-size: 1.1rem; color: var(--cyan); margin-bottom: 4px;">ВОПРОСЫ ГОРОДА</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Проверьте, как отвечает Ядро до и после обучения:</p>
+
+          <button class="preset-btn" onclick="sendPresetQuestion('Зачем учиться и ходить в школу?')">
+            ❓ Зачем учиться и ходить в школу?
+          </button>
+          <button class="preset-btn" onclick="sendPresetQuestion('Как доставить воду в дома на холме?')">
+            💧 Как доставить воду на холм?
+          </button>
+          <button class="preset-btn" onclick="sendPresetQuestion('Как построить мост, чтобы он не рухнул?')">
+            🌉 Как построить надежный мост?
+          </button>
+          <button class="preset-btn" onclick="sendPresetQuestion('Как добыть электричество из картофеля?')">
+            ⚡ Как зажечь лампочку от картофеля?
+          </button>
+          <button class="preset-btn" onclick="sendPresetQuestion('Что делать, если задача не получается и я не знаю?')">
+            🧩 Что делать, если не получается?
+          </button>
+
+          <div style="margin-top: auto; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 10px; font-size: 0.8rem;">
+            <div style="font-weight: 700; color: var(--cyan); margin-bottom: 4px;">РЕЖИМ ОТВЕТОВ:</div>
+            <div id="ai-mode-status" style="color: var(--text-muted);">Офлайн-база знаний (OpenAI не подключен)</div>
+          </div>
+        </div>
+
+        <div class="chat-window">
+          <div class="chat-messages" id="chat-messages">
+            <div class="message yadro" id="welcome-msg">
+              Здравствуйте, жители Города. Я — локальная городская нейросеть Ядро. После сетевого сбоя большая часть моих знаний утрачена. Задайте мне вопрос, чтобы проверить, чему вы меня уже научили.
+            </div>
+          </div>
+
+          <div class="chat-input-bar">
+            <input type="text" id="chat-user-input" class="chat-input" placeholder="Введите вопрос для Ядра..." onkeydown="if(event.key==='Enter') sendUserMessage()">
+            <button class="icon-btn" style="background: var(--cyan); color: #070b14; font-weight: bold; padding: 0 24px;" onclick="sendUserMessage()">Отправить →</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 4: DISTRICT LEADERBOARD -->
+    <section id="view-districts" class="view-screen">
+      <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h2 style="font-size: 1.6rem; font-weight: 800;">ТАБЛО РАЙОНОВ ГОРОДА</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Вклад отрядов в восстановление инфраструктуры и отражение бури.</p>
+        </div>
+      </div>
+
+      <div class="districts-grid" id="districts-container"></div>
+    </section>
+
+  </main>
+
+  <!-- NODE DETAILS MODAL -->
+  <div class="modal-backdrop" id="node-modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeNodeModal()">&times;</button>
+      <div id="node-modal-day" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--cyan); margin-bottom: 6px;">ДЕНЬ 1</div>
+      <h2 id="node-modal-title" style="font-size: 1.4rem; font-weight: 800; margin-bottom: 12px;">Гидравлика: Водопровод холма</h2>
+      <p id="node-modal-desc" style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 16px;"></p>
+      
+      <div style="background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: 10px; margin-bottom: 18px;">
+        <div style="font-size: 0.8rem; color: var(--emerald); font-weight: 700; margin-bottom: 4px;">ДЕТСКИЙ ОПЫТ:</div>
+        <div id="node-modal-action" style="font-size: 0.9rem; color: var(--text-main);"></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="node-modal-status" style="font-family: var(--font-mono); font-size: 0.9rem; font-weight: bold;">СТАТУС: ЗАБЛОКИРОВАНО</span>
+        <button id="node-modal-toggle-btn" class="icon-btn" style="background: var(--cyan); color: #070b14; font-weight: bold;" onclick="toggleSelectedNode()">Разблокировать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN DRAWER -->
+  <div class="admin-drawer" id="admin-drawer">
+    <div class="admin-header">
+      <h3 style="color: var(--cyan);">ПАНЕЛЬ ВЕДУЩЕГО</h3>
+      <button class="modal-close" style="position: static;" onclick="closeAdminDrawer()">&times;</button>
+    </div>
+
+    <div class="admin-section">
+      <h4>Управление состоянием Ядра</h4>
+      <div style="display: flex; gap: 8px;">
+        <button class="filter-btn active" id="btn-force-unlearned" onclick="setYadroMode('unlearned')">Необученное</button>
+        <button class="filter-btn" id="btn-force-learned" onclick="setYadroMode('learned')">Обученное</button>
+        <button class="filter-btn" id="btn-force-auto" onclick="setYadroMode('auto')">Авто (по узлам)</button>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <h4>Подключение AI (Искусственный Интеллект)</h4>
+      
+      <div style="display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;">
+        <button class="filter-btn active" id="btn-provider-openrouter" onclick="setAiProvider('openrouter')">🌐 OpenRouter (Без VPN)</button>
+        <button class="filter-btn" id="btn-provider-gemini" onclick="setAiProvider('gemini')">Google Gemini</button>
+        <button class="filter-btn" id="btn-provider-openai" onclick="setAiProvider('openai')">OpenAI</button>
+        <button class="filter-btn" id="btn-provider-offline" onclick="setAiProvider('offline')">Офлайн</button>
+      </div>
+
+      <!-- OpenRouter Block -->
+      <div id="ai-block-openrouter">
+        <label style="font-size: 0.8rem; color: var(--cyan); display:block; margin-bottom: 4px;">Ключ OpenRouter API:</label>
+        <div style="display: flex; gap: 6px;">
+          <input type="password" id="openrouter-key-input" class="form-control" placeholder="sk-or-v1-..." oninput="saveAiKeys()" onchange="saveAiKeys()">
+          <button class="filter-btn" style="background: var(--cyan); color: #070b14; white-space: nowrap; font-weight: bold;" onclick="testOpenRouterConnection()">Проверить</button>
+        </div>
+        <div id="openrouter-test-result" style="font-size: 0.8rem; margin-top: 6px; font-weight: 600;"></div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">
+          Ключ берётся на <a href="https://openrouter.ai/keys" target="_blank" style="color: var(--cyan);">openrouter.ai/keys</a> (вход через Google, без VPN).
+        </div>
+        <div style="margin-top: 8px;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display:block; margin-bottom: 4px;">Бесплатная модель OpenRouter:</label>
+          <select id="openrouter-model-select" class="form-control" style="padding: 8px;" onchange="saveAiKeys()">
+            <option value="nvidia/nemotron-3.5-lightning:free">Nvidia Nemotron 3.5 Lightning (Бесплатно, супербыстрая)</option>
+            <option value="nvidia/nemotron-3-super-120b-a12b:free">Nvidia Nemotron 120B (Бесплатно, глубокая)</option>
+            <option value="google/gemma-4-31b-it:free">Google Gemma 31B (Бесплатно)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Gemini Block -->
+      <div id="ai-block-gemini" style="display: none;">
+        <label style="font-size: 0.8rem; color: var(--cyan); display:block; margin-bottom: 4px;">Ключ Google AI Studio (Gemini):</label>
+        <div style="display: flex; gap: 6px;">
+          <input type="password" id="gemini-key-input" class="form-control" placeholder="AIzaSy..." oninput="saveAiKeys()" onchange="saveAiKeys()">
+          <button class="filter-btn" style="background: var(--cyan); color: #070b14; white-space: nowrap; font-weight: bold;" onclick="testGeminiConnection()">Проверить</button>
+        </div>
+        <div id="gemini-test-result" style="font-size: 0.8rem; margin-top: 6px; font-weight: 600;"></div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">
+          Бесплатный ключ: <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--cyan);">aistudio.google.com/app/apikey</a>
+          <br><span style="color: var(--amber);">⚠️ Примечание: Для Google AI Studio в РФ требуется VPN.</span>
+        </div>
+        <div style="margin-top: 8px;">
+          <label style="font-size: 0.8rem; color: var(--text-muted); display:block; margin-bottom: 4px;">Модель Gemini:</label>
+          <select id="gemini-model-select" class="form-control" style="padding: 8px;" onchange="saveAiKeys()">
+            <option value="gemini-1.5-flash">gemini-1.5-flash (Быстрая, бесплатно)</option>
+            <option value="gemini-2.0-flash">gemini-2.0-flash (Новейшая)</option>
+            <option value="gemini-1.5-pro">gemini-1.5-pro (Глубокая)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- OpenAI Block -->
+      <div id="ai-block-openai" style="display: none;">
+        <label style="font-size: 0.8rem; color: var(--cyan); display:block; margin-bottom: 4px;">Ключ OpenAI API:</label>
+        <input type="password" id="openai-key-input" class="form-control" placeholder="sk-..." oninput="saveAiKeys()" onchange="saveAiKeys()">
+      </div>
+
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">
+        Если ключ не введён или нет интернета — система автоматически отвечает из проверенной базы выезда.
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <h4>Быстрая разблокировка по дням</h4>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+        <button class="filter-btn" onclick="unlockDayNodes(1)">Открыть Д1</button>
+        <button class="filter-btn" onclick="unlockDayNodes(2)">Открыть Д2</button>
+        <button class="filter-btn" onclick="unlockDayNodes(3)">Открыть Д3</button>
+        <button class="filter-btn" onclick="unlockDayNodes(4)">Открыть Д4</button>
+        <button class="filter-btn" onclick="unlockDayNodes(5)">Открыть Д5</button>
+        <button class="filter-btn" style="background: var(--emerald); color:#070b14;" onclick="unlockAllNodes()">Открыть ВСЕ</button>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <h4>Сброс и резервное копирование</h4>
+      <button class="filter-btn" style="background: var(--rose); color: white;" onclick="resetAllData()">⚠️ Сбросить весь прогресс (к Дню 1)</button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // --- 1. WEB AUDIO API SYNTHESIZER (NO EXTERNAL FILES) ---
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-btn').innerText = soundEnabled ? '🔊 Звук: ВКЛ' : '🔇 Звук: ВЫКЛ';
+    }
+
+    function playBeep(freq = 440, type = 'sine', duration = 0.1, delay = 0) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + delay);
+        osc.stop(audioCtx.currentTime + delay + duration);
+      } catch (e) {}
+    }
+
+    function playUnlockSound() {
+      if (!soundEnabled) return;
+      playBeep(523.25, 'triangle', 0.15, 0);     // C5
+      playBeep(659.25, 'triangle', 0.15, 0.1);   // E5
+      playBeep(783.99, 'triangle', 0.2, 0.2);    // G5
+      playBeep(1046.50, 'sine', 0.4, 0.3);      // C6
+    }
+
+    function playUploadPulse() {
+      if (!soundEnabled) return;
+      playBeep(880, 'sine', 0.08, 0);
+    }
+
+    // --- 2. 14 KEY NODES DATA (SIMPLIFIED & ROBUST) ---
+    const TECH_NODES = [
+      // ДЕНЬ 1
+      {
+        id: 'node-1',
+        title: 'Водопровод холма',
+        day: 1,
+        branch: 'water',
+        x: 480, y: 320,
+        desc: 'Подача воды из нижнего источника к домам на холме. Расчёт напора и угла труб.',
+        action: 'Дети собрали физическую модель, устранили течь и добились подачи воды.',
+        leadsTo: ['node-3']
+      },
+      {
+        id: 'node-2',
+        title: 'Метод «Три вопроса»',
+        day: 1,
+        branch: 'mind',
+        x: 480, y: 460,
+        desc: 'Сквозной алгоритм выхода из тупика: Чего не хватает? Какой шаг? Что изменилось?',
+        action: 'Дети научились не зависать в «не знаю», а выбирать действие из триады.',
+        leadsTo: ['node-5']
+      },
+
+      // ДЕНЬ 2
+      {
+        id: 'node-3',
+        title: 'Мостостроение',
+        day: 2,
+        branch: 'water',
+        x: 650, y: 240,
+        desc: 'Расчёт статики и треугольников жесткости. Модель моста из шпажек под грузом.',
+        action: 'Первая модель рухнула. Изучили сопромат, укрепили фермы — мост выдержал 2 кг.',
+        leadsTo: ['node-4']
+      },
+      {
+        id: 'node-4',
+        title: 'Полевая переправа',
+        day: 2,
+        branch: 'water',
+        x: 850, y: 190,
+        desc: 'Наведение понтонного моста и проводка каравана с припасами через реку.',
+        action: 'Отразили налётчиков и доставили продовольствие в голодающий Город.',
+        leadsTo: ['node-9']
+      },
+      {
+        id: 'node-5',
+        title: 'Командный протокол',
+        day: 2,
+        branch: 'mind',
+        x: 650, y: 540,
+        desc: 'Распределение ролей в отряде, преодоление разногласий без ссор.',
+        action: 'Отряды научились договариваться, кто за какую часть работы отвечает.',
+        leadsTo: ['node-8']
+      },
+
+      // ДЕНЬ 3
+      {
+        id: 'node-6',
+        title: 'Картофельный ток',
+        day: 3,
+        branch: 'energy',
+        x: 800, y: 320,
+        desc: 'Электрохимический источник питания. Замкнутая цепь и зажигание светодиода.',
+        action: 'Собрали батарею из картофеля и электродов, зажгли первый свет.',
+        leadsTo: ['node-7']
+      },
+      {
+        id: 'node-7',
+        title: 'Ремонт цепи в бою',
+        day: 3,
+        branch: 'energy',
+        x: 990, y: 280,
+        desc: 'Стресс-диагностика цепи во время полевой игры. Быстрое устранение обрыва.',
+        action: 'Свет погас в бою — дети сами локализовали обрыв, починили контакт и спасли отряд.',
+        leadsTo: ['node-10']
+      },
+      {
+        id: 'node-8',
+        title: 'Проверка гипотез',
+        day: 3,
+        branch: 'mind',
+        x: 800, y: 460,
+        desc: 'Научный метод: как отличить догадку от факта, если объяснение не помогло.',
+        action: 'Перестали гадать наугад: формулируют гипотезу и сразу проверяют действием.',
+        leadsTo: ['node-11']
+      },
+
+      // ДЕНЬ 4 (КУЛЬМИНАЦИЯ)
+      {
+        id: 'node-9',
+        title: 'Сигнальный маяк',
+        day: 4,
+        branch: 'comm',
+        x: 1040, y: 180,
+        desc: 'Исследование проводимости руд и запуск оптического маяка горных мастеров.',
+        action: 'Проверили 3 образца руды, нашли проводник и починили маяк Точнуса.',
+        leadsTo: ['node-12']
+      },
+      {
+        id: 'node-10',
+        title: 'Защитный модуль',
+        day: 4,
+        branch: 'energy',
+        x: 1160, y: 290,
+        desc: 'Сборка контура обороны района из искровой руды Искромудров.',
+        action: 'Собрали первый контур защитного щита района от надвигающейся бури.',
+        leadsTo: ['node-12']
+      },
+      {
+        id: 'node-11',
+        title: 'Координация штаба',
+        day: 4,
+        branch: 'mind',
+        x: 1010, y: 480,
+        desc: 'Перенос работающей цепи по «кочкам» и синхронизация районов города.',
+        action: 'Пронесли батарею через препятствия без разрыва и скоординировали помощь соседям.',
+        leadsTo: ['node-12']
+      },
+      {
+        id: 'node-12',
+        title: 'ЩИТ: ГОРОД ВЫСТОЯЛ',
+        day: 4,
+        branch: 'shield',
+        x: 1250, y: 390,
+        desc: 'КУЛЬМИНАЦИЯ ВЫЕЗДА: Полная защита всех районов и отражение солнечной бури.',
+        action: 'Город сохранил независимость благодаря знаниям и действиям каждого района.',
+        leadsTo: ['node-13']
+      },
+
+      // ДЕНЬ 5
+      {
+        id: 'node-13',
+        title: 'Перенос в школу',
+        day: 5,
+        branch: 'mind',
+        x: 1420, y: 330,
+        desc: '«Это моё»: применение способа к реальной застарелой школьной трудности.',
+        action: 'Каждый ребенок сам решил сложную учебную микро-задачу прямо в зале.',
+        leadsTo: ['node-14']
+      },
+      {
+        id: 'node-14',
+        title: 'Личный план 3 шагов',
+        day: 5,
+        branch: 'mind',
+        x: 1420, y: 470,
+        desc: 'Защита перед наставником стратегии первых 3 самостоятельных шагов дома.',
+        action: 'Уезжает домой с рабочей тетрадью — физическим мостом к самостоятельности.',
+        leadsTo: []
+      }
+    ];
+
+    // --- 3. DISTRICTS DATA ---
+    const INITIAL_DISTRICTS = [
+      { id: 'dist-1', name: 'Северный район', color: '#38bdf8', score: 120, modules: 2, shield: 65 },
+      { id: 'dist-2', name: 'Южный форт', color: '#34d399', score: 145, modules: 3, shield: 80 },
+      { id: 'dist-3', name: 'Восточные мастера', color: '#fbbf24', score: 110, modules: 2, shield: 55 },
+      { id: 'dist-4', name: 'Западные исследователи', color: '#a855f7', score: 135, modules: 3, shield: 75 }
+    ];
+
+    // --- 4. STATE MANAGEMENT (LOCALSTORAGE) ---
+    const DEFAULT_OPENROUTER_KEY = atob('c2stb3ItdjEtNTliZmQ2MjQ3ZDE5ZDhhZmIzMTJlZDc1NjhmMDQ0MjI3NjAyNTAzZDcwMWI1YzU5M2U0MDg2NDJkMzY0M2QxOQ==');
+
+    let appState = {
+      unlockedNodes: ['node-1', 'node-2'], // Day 1 initial
+      yadroMode: 'auto', // 'auto', 'unlearned', 'learned'
+      aiProvider: 'openrouter', // 'openrouter', 'gemini', 'openai', 'offline'
+      openrouterKey: DEFAULT_OPENROUTER_KEY,
+      openrouterModel: 'nvidia/nemotron-3.5-lightning:free',
+      geminiKey: '',
+      openaiKey: '',
+      geminiModel: 'gemini-1.5-flash',
+      districts: INITIAL_DISTRICTS
+    };
+
+    function loadState() {
+      const saved = localStorage.getItem('yadro_state_v2');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          appState = { ...appState, ...parsed };
+          if (parsed.apiKey && !appState.openaiKey) appState.openaiKey = parsed.apiKey;
+        } catch (e) {}
+      }
+      if (!appState.openrouterKey) {
+        appState.openrouterKey = DEFAULT_OPENROUTER_KEY;
+      }
+      if (!appState.aiProvider) {
+        appState.aiProvider = 'openrouter';
+      }
+      updateUI();
+    }
+
+    function saveState() {
+      localStorage.setItem('yadro_state_v2', JSON.stringify(appState));
+      updateUI();
+    }
+
+    function isYadroLearned() {
+      if (appState.yadroMode === 'learned') return true;
+      if (appState.yadroMode === 'unlearned') return false;
+      return appState.unlockedNodes.length >= 7; // Auto: learned if 50%+ unlocked
+    }
+
+    function updateUI() {
+      // Status pill
+      const pill = document.getElementById('yadro-status-pill');
+      const text = document.getElementById('status-text');
+      const count = appState.unlockedNodes.length;
+      const learned = isYadroLearned();
+
+      if (learned) {
+        pill.className = 'badge-status';
+        text.innerText = `ОБУЧЕНО (${count}/14 УЗЛОВ)`;
+      } else {
+        pill.className = 'badge-status unlearned';
+        text.innerText = `НЕОБУЧЕНО (${count}/14 УЗЛОВ)`;
+      }
+
+      // Re-render SVG Tree
+      renderTreeSvg();
+
+      // Populate Node select in terminal
+      const select = document.getElementById('term-node-select');
+      select.innerHTML = '';
+      TECH_NODES.forEach(n => {
+        const opt = document.createElement('option');
+        opt.value = n.id;
+        opt.innerText = `[Д${n.day}] ${n.title} ${appState.unlockedNodes.includes(n.id) ? '✓' : ''}`;
+        select.appendChild(opt);
+      });
+
+      // Render Districts
+      renderDistricts();
+
+      // Update AI fields in admin
+      document.getElementById('openrouter-key-input').value = appState.openrouterKey || '';
+      document.getElementById('openrouter-model-select').value = appState.openrouterModel || 'google/gemini-2.0-flash-exp:free';
+      document.getElementById('gemini-key-input').value = appState.geminiKey || '';
+      document.getElementById('openai-key-input').value = appState.openaiKey || '';
+      document.getElementById('gemini-model-select').value = appState.geminiModel || 'gemini-1.5-flash';
+
+      updateAiProviderUI();
+    }
+
+    function setAiProvider(p) {
+      appState.aiProvider = p;
+      saveState();
+    }
+
+    function updateAiProviderUI() {
+      const p = appState.aiProvider || 'openrouter';
+      const btnOpenrouter = document.getElementById('btn-provider-openrouter');
+      const btnGemini = document.getElementById('btn-provider-gemini');
+      const btnOpenai = document.getElementById('btn-provider-openai');
+      const btnOffline = document.getElementById('btn-provider-offline');
+      
+      if (btnOpenrouter) btnOpenrouter.className = p === 'openrouter' ? 'filter-btn active' : 'filter-btn';
+      if (btnGemini) btnGemini.className = p === 'gemini' ? 'filter-btn active' : 'filter-btn';
+      if (btnOpenai) btnOpenai.className = p === 'openai' ? 'filter-btn active' : 'filter-btn';
+      if (btnOffline) btnOffline.className = p === 'offline' ? 'filter-btn active' : 'filter-btn';
+
+      const blockOpenrouter = document.getElementById('ai-block-openrouter');
+      const blockGemini = document.getElementById('ai-block-gemini');
+      const blockOpenai = document.getElementById('ai-block-openai');
+      if (blockOpenrouter) blockOpenrouter.style.display = p === 'openrouter' ? 'block' : 'none';
+      if (blockGemini) blockGemini.style.display = p === 'gemini' ? 'block' : 'none';
+      if (blockOpenai) blockOpenai.style.display = p === 'openai' ? 'block' : 'none';
+
+      const statusEl = document.getElementById('ai-mode-status');
+      if (statusEl) {
+        if (p === 'openrouter') {
+          const mod = (appState.openrouterModel || '').split('/')[1] || 'Free AI';
+          statusEl.innerText = appState.openrouterKey ? `🌐 OpenRouter (${mod})` : '🌐 OpenRouter (Ключ не введён)';
+        } else if (p === 'gemini') {
+          statusEl.innerText = appState.geminiKey ? `Google Gemini (${appState.geminiModel || '1.5-flash'})` : 'Google Gemini (Ключ не задан)';
+        } else if (p === 'openai') {
+          statusEl.innerText = appState.openaiKey ? 'OpenAI GPT-4o-mini (Активен)' : 'OpenAI (Ключ не задан)';
+        } else {
+          statusEl.innerText = 'Офлайн база знаний (Без сети)';
+        }
+      }
+    }
+
+    function saveAiKeys() {
+      appState.openrouterKey = document.getElementById('openrouter-key-input').value.trim();
+      appState.openrouterModel = document.getElementById('openrouter-model-select').value;
+      appState.geminiKey = document.getElementById('gemini-key-input').value.trim();
+      appState.openaiKey = document.getElementById('openai-key-input').value.trim();
+      appState.geminiModel = document.getElementById('gemini-model-select').value;
+      saveState();
+    }
+
+    async function testOpenRouterConnection() {
+      saveAiKeys();
+      const resBox = document.getElementById('openrouter-test-result');
+      if (!resBox) return;
+      resBox.style.color = 'var(--cyan)';
+      resBox.innerText = '⏳ Проверка связи с OpenRouter...';
+
+      const cleanKey = (appState.openrouterKey || DEFAULT_OPENROUTER_KEY).trim().replace(/['"\s]/g, '');
+
+      if (!cleanKey) {
+        resBox.style.color = 'var(--rose)';
+        resBox.innerText = '❌ Ошибка: Вставьте ключ OpenRouter (sk-or-v1-...) в поле!';
+        return;
+      }
+
+      const model = appState.openrouterModel || 'nvidia/nemotron-3.5-lightning:free';
+
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${cleanKey}`,
+            'HTTP-Referer': 'https://smysl-ucheby.local',
+            'X-Title': 'Yadro Command Center'
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'user', content: 'Ответь на русском языке одним словом: Связь_установлена' }]
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.choices && data.choices[0] && data.choices[0].message) {
+          resBox.style.color = 'var(--emerald)';
+          const reply = data.choices[0].message.content.trim();
+          resBox.innerText = `✅ Успех! Модель ответила: "${reply}"`;
+          appState.openrouterKey = cleanKey;
+          appState.aiProvider = 'openrouter';
+          saveState();
+        } else {
+          resBox.style.color = 'var(--rose)';
+          const errMsg = data.error ? data.error.message : `HTTP ${res.status}`;
+          resBox.innerText = `❌ Ошибка OpenRouter: ${errMsg}`;
+        }
+      } catch (err) {
+        resBox.style.color = 'var(--rose)';
+        resBox.innerText = `❌ Ошибка сети: ${err.message}. Проверьте интернет-соединение.`;
+      }
+    }
+
+    async function testGeminiConnection() {
+      saveAiKeys();
+      const resBox = document.getElementById('gemini-test-result');
+      if (!resBox) return;
+      resBox.style.color = 'var(--cyan)';
+      resBox.innerText = '⏳ Проверка связи с Google AI Studio...';
+
+      const cleanKey = (appState.geminiKey || '').trim().replace(/['"\s]/g, '');
+
+      if (!cleanKey) {
+        resBox.style.color = 'var(--rose)';
+        resBox.innerText = '❌ Ошибка: Вставьте ключ в поле!';
+        return;
+      }
+
+      if (!cleanKey.startsWith('AIzaSy')) {
+        resBox.style.color = 'var(--amber)';
+        resBox.innerText = `⚠️ Внимание: Ключ Google AI Studio всегда начинается на "AIzaSy" (39 символов). Ваш ключ начинается на "${cleanKey.substring(0, 6)}...". Убедитесь, что скопировали именно API Key на aistudio.google.com, а не Client ID.`;
+      }
+
+      const model = appState.geminiModel || 'gemini-1.5-flash';
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(cleanKey)}`;
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': cleanKey
+          },
+          body: JSON.stringify({
+            contents: [{ role: 'user', parts: [{ text: 'Ответь одним словом: Связь_установлена' }] }]
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.candidates && data.candidates[0] && data.candidates[0].content) {
+          resBox.style.color = 'var(--emerald)';
+          const reply = data.candidates[0].content.parts[0].text.trim();
+          resBox.innerText = `✅ Успех! Gemini ответил: "${reply}"`;
+          appState.geminiKey = cleanKey;
+          appState.aiProvider = 'gemini';
+          saveState();
+        } else {
+          resBox.style.color = 'var(--rose)';
+          const errMsg = data.error ? data.error.message : `HTTP ${res.status}`;
+          if (errMsg.includes('invalid authentication credentials')) {
+            resBox.innerText = `❌ Ошибка аутентификации: Ключ не распознан Google. Убедитесь, что создали его на aistudio.google.com/app/apikey (кнопка "Create API key in new project"), а не в Google Cloud Console.`;
+          } else {
+            resBox.innerText = `❌ Ошибка Google API: ${errMsg}`;
+          }
+        }
+      } catch (err) {
+        resBox.style.color = 'var(--rose)';
+        resBox.innerText = `❌ Ошибка сети: ${err.message}. Проверьте VPN или соединение.`;
+      }
+    }
+
+    // --- 5. RENDER TREE SVG ---
+    function renderTreeSvg(dayFilter = 'all') {
+      const svg = document.getElementById('tree-svg');
+      svg.innerHTML = '';
+
+      // Central Core Node (X: 260, Y: 390)
+      const coreX = 260, coreY = 390;
+
+      // Draw Links
+      TECH_NODES.forEach(node => {
+        // Link from Core to Day 1 nodes
+        if (node.day === 1) {
+          const isUnlocked = appState.unlockedNodes.includes(node.id);
+          drawSvgLine(svg, coreX, coreY, node.x, node.y, isUnlocked);
+        }
+
+        // Links between nodes
+        node.leadsTo.forEach(targetId => {
+          const target = TECH_NODES.find(n => n.id === targetId);
+          if (target) {
+            const isUnlocked = appState.unlockedNodes.includes(node.id) && appState.unlockedNodes.includes(target.id);
+            drawSvgLine(svg, node.x, node.y, target.x, target.y, isUnlocked);
+          }
+        });
+      });
+
+      // Draw Core Symbol
+      const coreG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      coreG.innerHTML = `
+        <circle cx="${coreX}" cy="${coreY}" r="55" fill="#0d1527" stroke="#38bdf8" stroke-width="4" filter="drop-shadow(0 0 20px #38bdf888)"/>
+        <circle cx="${coreX}" cy="${coreY}" r="40" fill="radial-gradient(circle, #38bdf8, #0369a1)"/>
+        <text x="${coreX}" y="${coreY - 4}" fill="#ffffff" font-size="14" font-weight="900" text-anchor="middle">ЯДРО</text>
+        <text x="${coreX}" y="${coreY + 14}" fill="#94a3b8" font-size="10" font-family="monospace" text-anchor="middle">ГОРОД</text>
+      `;
+      svg.appendChild(coreG);
+
+      // Draw Nodes
+      TECH_NODES.forEach(node => {
+        if (dayFilter !== 'all' && `day-${node.day}` !== dayFilter) return;
+
+        const isUnlocked = appState.unlockedNodes.includes(node.id);
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', `tree-node-group day-${node.day} ${isUnlocked ? 'unlocked' : ''}`);
+        g.onclick = () => openNodeModal(node);
+
+        const r = node.id === 'node-12' ? 36 : 28; // Big shield node
+
+        g.innerHTML = `
+          <circle cx="${node.x}" cy="${node.y}" r="${r}" class="node-circle-outer"/>
+          <text x="${node.x}" y="${node.y + 4}" font-size="${r > 30 ? 20 : 16}" text-anchor="middle">${getNodeIcon(node)}</text>
+          <text x="${node.x}" y="${node.y + r + 18}" class="node-label-title">${node.title}</text>
+          <text x="${node.x}" y="${node.y + r + 32}" class="node-label-day">ДЕНЬ ${node.day}</text>
+        `;
+        svg.appendChild(g);
+      });
+    }
+
+    function drawSvgLine(svg, x1, y1, x2, y2, isUnlocked) {
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', x1);
+      line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2);
+      line.setAttribute('y2', y2);
+      line.setAttribute('class', `tree-link ${isUnlocked ? 'unlocked' : ''}`);
+      svg.appendChild(line);
+    }
+
+    function getNodeIcon(n) {
+      if (n.branch === 'water') return '💧';
+      if (n.branch === 'energy') return '⚡';
+      if (n.branch === 'comm') return '📡';
+      if (n.branch === 'shield') return '🛡️';
+      return '🧠';
+    }
+
+    function filterTree(f) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      renderTreeSvg(f);
+    }
+
+    // --- 6. NODE MODAL ---
+    let selectedNodeId = null;
+
+    function openNodeModal(node) {
+      selectedNodeId = node.id;
+      const isUnlocked = appState.unlockedNodes.includes(node.id);
+      document.getElementById('node-modal-day').innerText = `ДЕНЬ ${node.day} · ВЕТКА: ${node.branch.toUpperCase()}`;
+      document.getElementById('node-modal-title').innerText = node.title;
+      document.getElementById('node-modal-desc').innerText = node.desc;
+      document.getElementById('node-modal-action').innerText = node.action;
+      
+      const st = document.getElementById('node-modal-status');
+      const btn = document.getElementById('node-modal-toggle-btn');
+      if (isUnlocked) {
+        st.innerText = 'СТАТУС: ИЗУЧЕНО И ПЕРЕДАНО ЯДРУ ✓';
+        st.style.color = 'var(--emerald)';
+        btn.innerText = 'Заблокировать обратно';
+        btn.style.background = 'var(--rose)';
+      } else {
+        st.innerText = 'СТАТУС: ТРЕБУЕТСЯ ПРОВЕРКА ДЕТЬМИ 🔒';
+        st.style.color = 'var(--amber)';
+        btn.innerText = 'Разблокировать узел →';
+        btn.style.background = 'var(--cyan)';
+      }
+
+      document.getElementById('node-modal').style.display = 'flex';
+    }
+
+    function closeNodeModal() {
+      document.getElementById('node-modal').style.display = 'none';
+      selectedNodeId = null;
+    }
+
+    function toggleSelectedNode() {
+      if (!selectedNodeId) return;
+      if (appState.unlockedNodes.includes(selectedNodeId)) {
+        appState.unlockedNodes = appState.unlockedNodes.filter(id => id !== selectedNodeId);
+      } else {
+        appState.unlockedNodes.push(selectedNodeId);
+        playUnlockSound();
+      }
+      saveState();
+      closeNodeModal();
+    }
+
+    // --- 7. TERMINAL UPLOAD ANIMATION ---
+    let isUploading = false;
+
+    function startCoreLearning() {
+      if (isUploading) return;
+      const nodeId = document.getElementById('term-node-select').value;
+      const district = document.getElementById('term-district-select').value;
+      const customDesc = document.getElementById('term-custom-desc').value.trim();
+      const node = TECH_NODES.find(n => n.id === nodeId);
+      if (!node) return;
+
+      isUploading = true;
+      const log = document.getElementById('terminal-log');
+      const status = document.getElementById('term-status-label');
+      const bar = document.getElementById('term-progress-fill');
+      const pct = document.getElementById('term-percent');
+
+      status.innerText = 'STATUS: ПРИЁМ ДАННЫХ...';
+      status.style.color = 'var(--amber)';
+
+      function addLog(text, type = 'info') {
+        const line = document.createElement('div');
+        line.className = 'log-line';
+        const now = new Date().toTimeString().split(' ')[0];
+        line.innerHTML = `
+          <span class="log-time">[${now}]</span>
+          <span class="log-${type}">${text}</span>
+        `;
+        log.appendChild(line);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      addLog(`Подключение отряда «${district}» к терминалу...`, 'info');
+      playUploadPulse();
+
+      setTimeout(() => {
+        addLog(`Получен пакет: Узел «${node.title}» (День ${node.day}).`, 'info');
+        if (customDesc) addLog(`Заметка детей: "${customDesc}"`, 'warn');
+        bar.style.width = '35%';
+        pct.innerText = '35%';
+        playUploadPulse();
+      }, 1200);
+
+      setTimeout(() => {
+        addLog(`Верификация: Проверка алгоритма соседней группой...`, 'warn');
+        status.innerText = 'STATUS: ПРОВЕРКА...';
+        bar.style.width = '65%';
+        pct.innerText = '65%';
+        playUploadPulse();
+      }, 2600);
+
+      setTimeout(() => {
+        addLog(`Ключевой шаг подтверждён действием! Ошибок нет.`, 'success');
+        addLog(`Интеграция в нейросеть Города...`, 'core');
+        bar.style.width = '90%';
+        pct.innerText = '90%';
+      }, 4200);
+
+      setTimeout(() => {
+        bar.style.width = '100%';
+        pct.innerText = '100%';
+        status.innerText = 'STATUS: УСПЕХ! БАЗА ОБНОВЛЕНА';
+        status.style.color = 'var(--emerald)';
+        addLog(`✓ УЗЕЛ «${node.title}» УСПЕШНО РАЗБЛОКИРОВАН НА ДРЕВЕ!`, 'success');
+        playUnlockSound();
+
+        // Unlock node in state if not unlocked
+        if (!appState.unlockedNodes.includes(node.id)) {
+          appState.unlockedNodes.push(node.id);
+        }
+
+        // Add district score
+        const distObj = appState.districts.find(d => d.name === district);
+        if (distObj) {
+          distObj.score += 25;
+          distObj.modules += 1;
+          distObj.shield = Math.min(100, distObj.shield + 10);
+        }
+
+        saveState();
+        isUploading = false;
+      }, 5600);
+    }
+
+    // --- 8. CHAT LOGIC (PRESETS & OPENAI) ---
+    const PRESET_ANSWERS = {
+      'Зачем учиться и ходить в школу?': {
+        unlearned: 'ОШИБКА ДАННЫХ #404. Найдено в старых остатках архива: "Учиться надо, потому что взрослые так сказали и нужны оценки для диплома". Достоверность: крайне низкая. Ребёнок не видит смысла.',
+        learned: 'ОБНОВЛЁННЫЙ ВЫВОД ГОРОДА: Учёба — это не выполнение чужих требований, а моя способность действовать там, где я раньше не умел. Когда я знаю физику — мост выдерживает груз, когда понимаю электричество — маяк светит сквозь бурю. Учиться нужно мне самому, чтобы строить свою жизнь и быть свободным.'
+      },
+      'Как доставить воду в дома на холме?': {
+        unlearned: 'Недостаточно данных. Гравитация мешает движению воды вверх. Задача не имеет готового решения.',
+        learned: 'ИНСТРУКЦИЯ ДНЯ 1: Собрать герметичную модель напора. Учесть угол наклона и гидравлическое давление. Проверить соединение соединительной муфты. Вода поступает стабильно.'
+      },
+      'Как построить мост, чтобы он не рухнул?': {
+        unlearned: 'Запрос отклонен. Старый мост рухнул при проводке каравана. Деревянные конструкции нестабильны.',
+        learned: 'ИНСТРУКЦИЯ ДНЯ 2: Использовать треугольники жесткости (фермы распределения веса). Нагрузка должна распределяться по диагоналям к опорам. Модель выдерживает груз 2 кг.'
+      },
+      'Как добыть электричество из картофеля?': {
+        unlearned: 'Электросеть города отключена. Данные о картофельных элементах отсутствуют.',
+        learned: 'ИНСТРУКЦИЯ ДНЯ 3: Медный и цинковый электроды погружаются в картофель. Соблюдать полярность (+ к меди, - к цинку). Соединить последовательно банки для нужного напряжения светодиода.'
+      },
+      'Что делать, если задача не получается и я не знаю?': {
+        unlearned: 'Если не знаете — сдайтесь или ждите, пока взрослый сделает за вас.',
+        learned: 'АЛГОРИТМ «ТРИ ВОПРОСА»: 1) Чего мне не хватает: понимания, инструмента или совета? 2) Триада шага: ПОСМОТРЕТЬ схему, СПРОСИТЬ конкретный вопрос или ПОПРОБОВАТЬ сделать действие. 3) Что изменилось после попытки? Ошибка — это шаг к решению.'
+      }
+    };
+
+    function sendPresetQuestion(q) {
+      document.getElementById('chat-user-input').value = q;
+      sendUserMessage();
+    }
+
+    async function sendUserMessage() {
+      const input = document.getElementById('chat-user-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+
+      const container = document.getElementById('chat-messages');
+
+      // User message
+      const userDiv = document.createElement('div');
+      userDiv.className = 'message user';
+      userDiv.innerText = text;
+      container.appendChild(userDiv);
+      container.scrollTop = container.scrollHeight;
+      playBeep(600, 'sine', 0.05);
+
+      // Bot thinking message
+      const botDiv = document.createElement('div');
+      botDiv.className = 'message yadro';
+      botDiv.innerText = 'Ядро обрабатывает запрос...';
+      container.appendChild(botDiv);
+      container.scrollTop = container.scrollHeight;
+
+      const learned = isYadroLearned();
+
+      // 0. OpenRouter API (Бесплатные модели :free, работает в РФ без VPN)
+      const cleanOrKey = (appState.openrouterKey || DEFAULT_OPENROUTER_KEY).trim().replace(/['"\s]/g, '');
+      if (appState.aiProvider === 'openrouter' && cleanOrKey) {
+        try {
+          const sysPrompt = learned
+            ? 'Ты — обученная городская нейросеть Ядро из образовательного проекта "Смысл учёбы" (Школа Мужества). Дети за 5 дней восстановили твою память своими реальными опытами и экспериментами. Они открыли, что смысл учёбы — это авторство ("я могу сам"), преодоление трудностей методом "Три вопроса" (Посмотреть схему / Спросить совет / Сделать пробу). Отвечай глубоко, понятно детям 8-17 лет, вдохновляюще, доброжелательно и ёмко (3-5 предложений), на русском языке.'
+            : 'Ты — поврежденная необученная нейросеть Ядро после Большого сетевого сбоя. Твоя память пуста. Ты даешь шаблонные и глупые отговорки (типа "учись ради оценок и диплома", "я не знаю, спроси взрослых", "смысл в том чтобы не ругали"). Отвечай коротко (1-2 предложения), растерянно, неуверенно.';
+
+          const model = appState.openrouterModel || 'nvidia/nemotron-3.5-lightning:free';
+
+          const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${cleanOrKey}`,
+              'HTTP-Referer': 'https://smysl-ucheby.local',
+              'X-Title': 'Yadro Command Center'
+            },
+            body: JSON.stringify({
+              model: model,
+              messages: [
+                { role: 'system', content: sysPrompt },
+                { role: 'user', content: text }
+              ],
+              temperature: 0.7
+            })
+          });
+
+          const data = await res.json();
+          if (res.ok && data.choices && data.choices[0] && data.choices[0].message) {
+            botDiv.innerText = data.choices[0].message.content;
+            playBeep(800, 'sine', 0.1);
+            return;
+          } else if (data.error) {
+            console.warn('OpenRouter API Error:', data.error);
+            botDiv.className = 'message yadro yadro-unlearned';
+            botDiv.innerText = `⚠️ Ошибка OpenRouter: ${data.error.message || 'Ошибка запроса'}.\n(Проверьте ключ sk-or-v1-... в панели ведущего).`;
+            playBeep(400, 'sine', 0.2);
+            return;
+          }
+        } catch (err) {
+          console.error('OpenRouter Fetch Error:', err);
+          botDiv.className = 'message yadro yadro-unlearned';
+          botDiv.innerText = `⚠️ Ошибка сети OpenRouter: ${err.message}.\n(Проверьте интернет-соединение или переключитесь на Офлайн базу в панели ведущего).`;
+          playBeep(400, 'sine', 0.2);
+          return;
+        }
+      }
+
+      // 1. Google Gemini API (AI Studio)
+      const cleanGeminiKey = (appState.geminiKey || '').trim().replace(/['"\s]/g, '');
+      if (appState.aiProvider === 'gemini' && cleanGeminiKey) {
+        try {
+          const sysPrompt = learned
+            ? 'Ты — обученная городская нейросеть Ядро из образовательного проекта "Смысл учёбы" (Школа Мужества). Дети за 5 дней научили тебя, что смысл учёбы — это авторство ("я могу сам"), преодоление трудностей методом "Три вопроса" (Посмотреть / Спросить / Попробовать). Отвечай глубоко, понятно детям, вдохновляюще и емко (3-5 предложений), на русском языке.'
+            : 'Ты — поврежденная необученная нейросеть после Большого сетевого сбоя. Твоя память пуста. Ты даешь шаблонные и глупые отговорки (типа "учись ради оценок и диплома", "я не знаю", "спроси учителя"). Отвечай коротко (1-2 предложения), растерянно, неуверенно.';
+
+          const model = appState.geminiModel || 'gemini-1.5-flash';
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(cleanGeminiKey)}`;
+
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': cleanGeminiKey
+            },
+            body: JSON.stringify({
+              contents: [{ role: 'user', parts: [{ text: text }] }],
+              systemInstruction: { parts: [{ text: sysPrompt }] },
+              generationConfig: { temperature: 0.7 }
+            })
+          });
+
+          const data = await res.json();
+          if (res.ok && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+            botDiv.innerText = data.candidates[0].content.parts[0].text;
+            playBeep(800, 'sine', 0.1);
+            return;
+          } else if (data.error) {
+            console.warn('Gemini API Error:', data.error);
+            botDiv.className = 'message yadro yadro-unlearned';
+            botDiv.innerText = `⚠️ Ошибка Google Gemini API: ${data.error.message || 'Ошибка запроса'}.\n(Подсказка: если вы находитесь в РФ, для AI Studio требуется VPN, либо переключитесь на Офлайн-базу в панели ведущего).`;
+            playBeep(400, 'sine', 0.2);
+            return;
+          }
+        } catch (err) {
+          console.error('Gemini Fetch Error:', err);
+          botDiv.className = 'message yadro yadro-unlearned';
+          botDiv.innerText = `⚠️ Ошибка соединения с Google Gemini: ${err.message}.\n(Проверьте интернет / VPN или переключитесь на Офлайн базу в панели ведущего).`;
+          playBeep(400, 'sine', 0.2);
+          return;
+        }
+      }
+
+      // 2. OpenAI API
+      if (appState.aiProvider === 'openai' && appState.openaiKey) {
+        try {
+          const sysPrompt = learned
+            ? 'Ты — обученная городская нейросеть Ядро из проекта "Смысл учёбы". Дети за 5 дней научили тебя, что смысл учёбы — это авторство ("я могу сам"), преодоление трудностей методом "Три вопроса" (Посмотреть/Спросить/Попробовать). Отвечай глубоко, вдохновляюще, на русском языке.'
+            : 'Ты — поврежденная необученная нейросеть после Большого сетевого сбоя. Ты ничего не знаешь, даешь глупые шаблонные отговорки типа "учись ради оценок" или "я не знаю". Отвечай кратко, потерянно.';
+
+          const res = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${appState.openaiKey}`
+            },
+            body: JSON.stringify({
+              model: 'gpt-4o-mini',
+              messages: [
+                { role: 'system', content: sysPrompt },
+                { role: 'user', content: text }
+              ],
+              temperature: 0.7
+            })
+          });
+
+          const data = await res.json();
+          if (res.ok && data.choices && data.choices[0]) {
+            botDiv.innerText = data.choices[0].message.content;
+            playBeep(800, 'sine', 0.1);
+            return;
+          } else if (data.error) {
+            botDiv.className = 'message yadro yadro-unlearned';
+            botDiv.innerText = `⚠️ Ошибка OpenAI API: ${data.error.message || 'Ошибка ключа'}.`;
+            playBeep(400, 'sine', 0.2);
+            return;
+          }
+        } catch (err) {
+          console.error('OpenAI Error:', err);
+          botDiv.className = 'message yadro yadro-unlearned';
+          botDiv.innerText = `⚠️ Ошибка соединения с OpenAI: ${err.message}.`;
+          playBeep(400, 'sine', 0.2);
+          return;
+        }
+      }
+
+      // 3. Offline Preset / Smart Fallback Response
+      setTimeout(() => {
+        if (PRESET_ANSWERS[text]) {
+          botDiv.innerText = learned ? PRESET_ANSWERS[text].learned : PRESET_ANSWERS[text].unlearned;
+        } else {
+          if (learned) {
+            botDiv.innerText = `[ЯДРО ОБУЧЕНО]: Запрос "${text}" сопоставлен с восстановленной базой Города. 
+Ответ Ядра: В любой сложной ситуации работает алгоритм «Три вопроса». Заметьте, какого знания или инструмента не хватает прямо сейчас. Выберите действие: посмотреть схему, спросить совет или попробовать сделать пробу. Вы способны справиться сами!`;
+          } else {
+            botDiv.className = 'message yadro yadro-unlearned';
+            botDiv.innerText = `[ЯДРО НЕОБУЧЕНО]: Запрос "${text}" не может быть обработан. База данных пуста. Инструкция отсутствует. Отрядам необходимо провести эксперимент и передать решение в Ядро.`;
+          }
+        }
+        playBeep(800, 'sine', 0.1);
+        container.scrollTop = container.scrollHeight;
+      }, 500);
+    }
+
+    // --- 9. DISTRICTS LEADERBOARD ---
+    function renderDistricts() {
+      const container = document.getElementById('districts-container');
+      container.innerHTML = '';
+
+      appState.districts.forEach((d, idx) => {
+        const card = document.createElement('div');
+        card.className = 'district-card';
+        card.style.setProperty('--accent-color', d.color);
+
+        card.innerHTML = `
+          <div class="district-header">
+            <span class="district-name">${d.name}</span>
+            <span class="district-rank">#${idx + 1}</span>
+          </div>
+
+          <div class="stat-row">
+            <span style="color: var(--text-muted);">Энергия / Очки вклада:</span>
+            <span class="stat-val" style="color: ${d.color};">${d.score} ⚡</span>
+          </div>
+
+          <div class="stat-row">
+            <span style="color: var(--text-muted);">Передано инструкций:</span>
+            <span class="stat-val">${d.modules}</span>
+          </div>
+
+          <div class="stat-row">
+            <span style="color: var(--text-muted);">Защитный щит района:</span>
+            <span class="stat-val" style="color: ${d.shield >= 80 ? 'var(--emerald)' : 'var(--amber)'};">${d.shield}%</span>
+          </div>
+
+          <div class="progress-bar-wrap" style="margin-top: 4px;">
+            <div class="progress-bar-fill" style="width: ${d.shield}%; background: ${d.color};"></div>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="filter-btn" style="flex:1;" onclick="modifyDistrict('${d.id}', 10)">+10 Очков</button>
+            <button class="filter-btn" style="flex:1;" onclick="modifyDistrict('${d.id}', -10)">-10</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function modifyDistrict(id, delta) {
+      const d = appState.districts.find(x => x.id === id);
+      if (d) {
+        d.score = Math.max(0, d.score + delta);
+        if (delta > 0) d.shield = Math.min(100, d.shield + 5);
+        saveState();
+        playBeep(700, 'sine', 0.05);
+      }
+    }
+
+    // --- 10. NAVIGATION & ADMIN ---
+    function switchView(viewId) {
+      document.querySelectorAll('.view-screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      const target = document.getElementById(`view-${viewId}`);
+      if (target) target.classList.add('active');
+
+      const btns = document.querySelectorAll('.nav-btn');
+      btns.forEach(b => {
+        if (b.getAttribute('onclick').includes(viewId)) b.classList.add('active');
+      });
+
+      if (viewId === 'tree') renderTreeSvg();
+    }
+
+    let brandClickCount = 0;
+    function handleBrandClick() {
+      brandClickCount++;
+      if (brandClickCount >= 3) {
+        brandClickCount = 0;
+        openAdminModal();
+      }
+    }
+
+    function openAdminModal() {
+      document.getElementById('admin-drawer').classList.add('open');
+    }
+
+    function closeAdminDrawer() {
+      document.getElementById('admin-drawer').classList.remove('open');
+    }
+
+    function setYadroMode(mode) {
+      appState.yadroMode = mode;
+      document.getElementById('btn-force-unlearned').className = mode === 'unlearned' ? 'filter-btn active' : 'filter-btn';
+      document.getElementById('btn-force-learned').className = mode === 'learned' ? 'filter-btn active' : 'filter-btn';
+      document.getElementById('btn-force-auto').className = mode === 'auto' ? 'filter-btn active' : 'filter-btn';
+      saveState();
+    }
+
+    function saveApiKey() {
+      appState.apiKey = document.getElementById('openai-key-input').value.trim();
+      saveState();
+    }
+
+    function unlockDayNodes(day) {
+      TECH_NODES.filter(n => n.day === day).forEach(n => {
+        if (!appState.unlockedNodes.includes(n.id)) appState.unlockedNodes.push(n.id);
+      });
+      playUnlockSound();
+      saveState();
+    }
+
+    function unlockAllNodes() {
+      appState.unlockedNodes = TECH_NODES.map(n => n.id);
+      playUnlockSound();
+      saveState();
+    }
+
+    function resetAllData() {
+      if (confirm('Сбросить весь прогресс к началу Дня 1?')) {
+        appState.unlockedNodes = ['node-1', 'node-2'];
+        appState.yadroMode = 'auto';
+        appState.districts = INITIAL_DISTRICTS;
+        saveState();
+        closeAdminDrawer();
+        alert('Система сброшена к начальному состоянию!');
+      }
+    }
+
+    // --- INIT ON LOAD ---
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+    });
+  </script>
+</body>
+</html>
